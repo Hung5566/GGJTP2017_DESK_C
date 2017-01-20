@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerCtrl : MonoBehaviour
 {
@@ -10,11 +11,10 @@ public class PlayerCtrl : MonoBehaviour
     private Vector2 MouseReferencePos;
     public static PlayerCtrl Instance;
 
-
-
     void Awake()
     {
         Instance = this;
+
 
     }
     void Update()
@@ -29,13 +29,15 @@ public class PlayerCtrl : MonoBehaviour
     /// <returns></returns>
     public float GetNowDifference()
     {
-
+        float _Diff = 0;
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Input.GetMouseButton(0))
         {
-        return Physics.Raycast(ray, out hit) ? hit.point.y: 0;
+            _Diff=Physics.Raycast(ray, out hit) ? hit.point.y: 0;
         }
-        return 0;
+        return _Diff;
     }
+
+
 }

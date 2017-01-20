@@ -1,20 +1,31 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Wave : MonoBehaviour {
+public class Wave  {
 
     /// <summary>
     /// 振福
     /// </summary>
-    [SerializeField]
     private float m_Amplitude = 0;
+    /// <summary>
+    /// 頻率
+    /// </summary>
+    private float m_Hz = 0;
 
-
-    public Wave(float _Amp)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="_Amp"></param>震幅
+    /// <param name="_Wavelength"></param>波長
+    public Wave(float _Amp,float _Wavelength)
     {
-
         m_Amplitude = _Amp;
+        m_Hz =1f/_Wavelength;
+    }
 
+    public float GetHz()
+    {
+        return m_Hz;
     }
 
     /// <summary>
