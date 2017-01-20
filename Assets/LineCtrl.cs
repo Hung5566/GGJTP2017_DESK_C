@@ -12,11 +12,13 @@ public class LineCtrl : MonoBehaviour
     private List<float> m_PosList = new List<float>();
     private Wave NextWave;
     private float m_t;
+    [SerializeField]
     private float Size;
-
+    private PlayerCtrl m_PlayerCtrl;
 
     void Awake()
     {
+
         WaveIn(new Wave(5));
         m_LineRender = GetComponent<LineRenderer>();
         m_LineRender.SetVertexCount(Amount);
@@ -40,19 +42,23 @@ public class LineCtrl : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
+        m_PlayerCtrl = PlayerCtrl.Instance;
     }
 
+    /// <summary>
+    /// 到下一時間
+    /// </summary>
     private void NextTime()
     {
         m_PosList.RemoveAt(0);
         m_PosList.Add(NextWave.GetPos(m_t));
-        m_t += 0.1f;
+        m_t += 0.02f;
         if(m_t>=1)
         {
             WaveIn(new Wave(Size));
             Size += 0.5f;
         }
+       m_PosList[50]+= m_PlayerCtrl.GetNowDifference();
 
     }
 
