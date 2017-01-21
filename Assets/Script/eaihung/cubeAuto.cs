@@ -44,7 +44,8 @@ public class cubeAuto : MonoBehaviour {
         }
     }
     void waveGen() {
-        wg.GetComponent<CubeMap>().CreatEarthQuake(transform.position);
+
+        wg.GetComponent<CubeMap>().CreatEarthQuake(transform.position,-1);
     }
     public void showNumImg(int num) {
         myCounterNum.GetComponent<SpriteRenderer>().sprite = wg.counterNum[num].GetComponent<SpriteRenderer>().sprite;
