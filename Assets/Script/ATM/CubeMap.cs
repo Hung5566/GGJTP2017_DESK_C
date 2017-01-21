@@ -90,7 +90,7 @@ public class CubeMap : MonoBehaviour
     {
         GameObject _EQ= Instantiate(Earth, _Pos, Quaternion.identity) as GameObject;
         //m_EarthQuake.Add(new EarthQuart(x, y, 5));
-        _EQ.GetComponent<EarthQuart>().Init(200);
+        _EQ.GetComponent<EarthQuart>().Init(120);
     }
     // Update is called once per frame
     void Update()
