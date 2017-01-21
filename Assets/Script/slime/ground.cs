@@ -72,8 +72,8 @@ public class ground : MonoBehaviour
 {
     public GameObject sandCube;
     buildingReaction BuildingReaction;
-	private const int ground_max_x = 49;
-	private const int ground_max_z = 49;
+	private const int ground_max_x = 33;
+	private const int ground_max_z = 33;
 
 	private GameObject[,] ground_array = new GameObject[ground_max_x, ground_max_z];
 
@@ -102,7 +102,7 @@ public class ground : MonoBehaviour
                 Destroy(ground_array[x, z].GetComponent<MeshFilter>());
                 Destroy(ground_array[x, z].GetComponent<MeshRenderer>());
 
-                if (x >= 22 && x <= 26 && z >= 22 && z <= 26)
+                if (x >= ground_max_x - 2 && x <= ground_max_x+2 && z >= ground_max_x - 2 && z <= ground_max_x + 2)
                 {
                     BuildingReaction.locationStr.Add(ground_array[x, z]);
                 }
