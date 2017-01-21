@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-using System.Collections.Generic;
+using System.Collections.Generic; // for List<T>, Dictionary<T>.
 
 public class Vector3_Int
 {
@@ -28,14 +28,20 @@ public class Vector3_Int
 		is_active = true;
 	}
 
+	public void AddPower(int in_power, int in_delay)
+	{
+		delay = (delay + in_delay) / 2;
+		power = (power + in_power) / 2;
+		is_active = true;
+	}
+
 	public void Tick()
 	{
 		if (!is_active) {
 			return;
 		}
 
-		if (delay > 0)
-		{
+		if (delay > 0) {
 			--delay;
 			return;
 		}
@@ -67,14 +73,16 @@ public class ground : MonoBehaviour
 
 	private GameObject[,] ground_array = new GameObject[ground_max_x, ground_max_z];
 
-	private List<Vector3_Int> wave_points = new List<Vector3_Int>();
+	private Dictionary<int, Vector3_Int> wave_points = new Dictionary<int, Vector3_Int>();
+	private List<int> wave_points_removeable = new List<int>();
+
+	private Dictionary<int, Vector3_Int> wave_points_ex = new Dictionary<int, Vector3_Int>();
+	private List<int> wave_points_removeable_ex = new List<int>();
 
 	private void Start ()
 	{
-		for (int z = 0; z < ground_max_z; ++z)
-		{
-			for (int x = 0; x < ground_max_x; ++x)
-			{
+		for (int z = 0; z < ground_max_z; ++z) {
+			for (int x = 0; x < ground_max_x; ++x) {
 				ground_array[x, z] = GameObject.CreatePrimitive(PrimitiveType.Cube);
 				ground_array[x, z].transform.position = new Vector3(x, 0.0F, z);
 				ground_array[x, z].transform.parent = this.transform;
@@ -87,11 +95,13 @@ public class ground : MonoBehaviour
 
 	private void CreateWaveCenter(int wave_x, int wave_y, int wave_z, int wave_power)
 	{
+		int key_id = wave_z * 1000 + wave_x;
+
 		// renew cube pos.
 		ground_array[wave_x, wave_z].transform.position =
 			new Vector3(wave_x, wave_y, wave_z);
 		// change cube color.
-		ground_array[wave_x, wave_z].GetComponent<Renderer>().material.color = Color.yellow;
+		////ground_array[wave_x, wave_z].GetComponent<Renderer>().material.color = Color.yellow;
 		// create new point data.
 		Vector3_Int new_point = new Vector3_Int(
 			wave_x,
@@ -101,7 +111,11 @@ public class ground : MonoBehaviour
 		// add power on point.
 		new_point.SetPower(wave_power, 0);
 		// push point into queue.
-		wave_points.Add(new_point);
+		if (wave_points.ContainsKey(key_id)) {
+			wave_points[key_id] = new_point;
+		} else {
+			wave_points.Add(key_id, new_point);
+		}
 
 		MakeWaves(wave_x, wave_z, wave_power);
 	}
@@ -109,41 +123,55 @@ public class ground : MonoBehaviour
 	private void MakeWaves(int wave_x, int wave_z, int wave_power)
 	{
 		//int attenuation_rate = ground_max_x;
+		int diffusion_rate = 2;
 
-		for (int z = 0; z < ground_max_z; ++z)
-		{
-			for (int x = 0; x < ground_max_x; ++x)
-			{
-				float dist = Vector3.Distance(
-					ground_array[wave_x, wave_z].transform.position,
-					ground_array[x, z].transform.position);
-				//Debug.Log(string.Format("({0}, {1}) Dist = {2}", x, z, dist));
+		for (int z = 0; z < ground_max_z; ++z) {
+			for (int x = 0; x < ground_max_x; ++x) {
 
-				ground_array[x, z].GetComponent<Renderer>().material.color = Color.blue;
+				int key_id = z * 1000 + x;
 
-				int lower_power = (int)(wave_power * ((ground_max_x - dist) / ground_max_x));
-				int delay_power = (int)(dist * 5);
+				if (wave_points.ContainsKey(key_id)) {
+					// change active point.
+					float dist = Vector3.Distance(
+						ground_array[wave_x, wave_z].transform.position,
+						ground_array[x, z].transform.position);
 
-				//Debug.Log(string.Format("lower_power = {0}, delay_power = {1}", lower_power, delay_power));
+					////ground_array[x, z].GetComponent<Renderer>().material.color = Color.magenta;
 
-				Vector3_Int new_point = new Vector3_Int(
-					x,
-					(int)ground_array[x, z].transform.position.y,
-					z
-				);
-				new_point.SetPower(lower_power, delay_power);
-				wave_points.Add(new_point);
+					int lower_power = (int)(wave_power * ((ground_max_x - dist) / ground_max_x)); // TODO:
+					int delay_power = (int)(dist * diffusion_rate);
+
+					wave_points[key_id].AddPower(lower_power, delay_power);
+
+				} else {
+					// add active point.
+					float dist = Vector3.Distance(
+						ground_array[wave_x, wave_z].transform.position,
+						ground_array[x, z].transform.position);
+					//Debug.Log(string.Format("({0}, {1}) Dist = {2}", x, z, dist));
+
+					////ground_array[x, z].GetComponent<Renderer>().material.color = Color.blue;
+
+					int lower_power = (int)(wave_power * ((ground_max_x - dist) / ground_max_x)); // TODO:
+					int delay_power = (int)(dist * diffusion_rate);
+
+					//Debug.Log(string.Format("lower_power = {0}, delay_power = {1}", lower_power, delay_power));
+
+					Vector3_Int new_point = new Vector3_Int(
+						x,
+						(int)ground_array[x, z].transform.position.y,
+						z
+					);
+					new_point.SetPower(lower_power, delay_power);
+					wave_points.Add(key_id, new_point);
+				}
 			}
 		}
 	}
 
-	private void Update ()
+	private void Input_Wave()
 	{
-
-		if (Input.GetKeyUp("w"))
-		{
-//			Debug.Log(Input.mousePosition);
-
+		if (Input.GetKeyUp("w")) {
 			System.Random rnd = new System.Random(System.DateTime.UtcNow.Millisecond);
 
 			int wave_start_x = rnd.Next(ground_max_x);
@@ -155,60 +183,222 @@ public class ground : MonoBehaviour
 
 			CreateWaveCenter(wave_start_x, (int)hight_now, wave_start_z, wave_power);
 		}
+	}
 
-		if (wave_points.Count > 0)
-		{
-			foreach (Vector3_Int pt in wave_points) {
-				pt.Tick();
+	private void Update_WavePoints()
+	{
+		if (wave_points.Count > 0) {
 
-				ground_array[pt.x, pt.z].transform.position = pt.GetNewPoint();
+			foreach (KeyValuePair<int, Vector3_Int> pt in wave_points) {
+				pt.Value.Tick();
 
-				if (!pt.IsActive()) {
-					ground_array[pt.x, pt.z].GetComponent<Renderer>().material.color = Color.green;
-//					wave_points.Remove(pt);
+				ground_array[pt.Value.x, pt.Value.z].transform.position = pt.Value.GetNewPoint();
+
+				if (!pt.Value.IsActive()) {
+					////ground_array[pt.Value.x, pt.Value.z].GetComponent<Renderer>().material.color = Color.green;
+					wave_points_removeable.Add(pt.Key);
 				}
 			}
 
-			wave_points.RemoveAll(item => item.IsActive() == false);
+			foreach (int item_key in wave_points_removeable) {
+				wave_points.Remove(item_key);
+			}
+			wave_points_removeable.Clear();
 
-			//Vector3_Int point = wave_points.Peek();
+			// remove not active items.
+			//wave_points.RemoveAll(item => item.IsActive() == false);
 
-//			point.y -= 5;
-//			if (point.y < 0) {
-//				point.y = 0;
-//			}
+			Debug.Log(string.Format("wave_points count = {0}", wave_points.Count));
+		}
+	}
 
-//			ground_array[point.x, point.z].transform.position = point.GetNewPoint();
-//			if (point.IsActive()) {
-//				wave_points.Enqueue(point);
-//			} else {
-//				ground_array[point.x, point.z].GetComponent<Renderer>().material.color = Color.green;
-//			}
-//			wave_points.Dequeue();
+	private void CreateWaveCenterEx(int wave_x, int wave_y, int wave_z, int wave_power)
+	{
+		int key_id = wave_z * 1000 + wave_x;
 
-			// point up
-			////Vector3_Int upper_point = new Vector3_Int(point.x, point.y, point.z + 1);
-//			int upper_z = point.z + 1;
-//			if (upper_z >= 0 && upper_z < ground_max_z) {
-//				ground_array[point.x, upper_z].transform.position
-//				= new Vector3(point.x, point.y / 100.0f, upper_z);
-//				if (point.y > 0) {
-//					wave_points.Enqueue(new Vector3_Int(
-//						point.x, point.y * 100, upper_z)
-//					);
-//				}
-//			}
-			// point down
-
-			// point left
-			// point right
-
-
-
-			//Debug.Log(string.Format("wave_points count = {0}", wave_points.Count));
+		// renew cube pos.
+		ground_array[wave_x, wave_z].transform.position =
+			new Vector3(wave_x, wave_y, wave_z);
+		// change cube color.
+		////ground_array[wave_x, wave_z].GetComponent<Renderer>().material.color = Color.red;
+		// create new point data.
+		Vector3_Int new_point = new Vector3_Int(
+			wave_x,
+			(int)ground_array[wave_x, wave_z].transform.position.y,
+			wave_z
+		);
+		// add power on point.
+		new_point.SetPower(wave_power, 0);
+		// push point into queue.
+		if (wave_points_ex.ContainsKey(key_id)) {
+			wave_points_ex[key_id] = new_point;
+		} else {
+			wave_points_ex.Add(key_id, new_point);
 		}
 
-	
+		MakeWavesEx(wave_x, wave_z, wave_power);
+	}
+
+	private void MakeWavesEx(int wave_x, int wave_z, int wave_power)
+	{
+		//int attenuation_rate = ground_max_x;
+		int diffusion_rate = 2;
+
+		for (int z = 0; z < ground_max_z; ++z) {
+			for (int x = 0; x < ground_max_x; ++x) {
+
+				int key_id = z * 1000 + x;
+
+				if (wave_points_ex.ContainsKey(key_id)) {
+					// change active point.
+					float dist = Vector3.Distance(
+						ground_array[wave_x, wave_z].transform.position,
+						ground_array[x, z].transform.position);
+
+					////ground_array[x, z].GetComponent<Renderer>().material.color = Color.magenta;
+
+					int lower_power = (int)(wave_power * ((ground_max_x - dist) / ground_max_x)); // TODO:
+					int delay_power = (int)(dist * diffusion_rate);
+
+					wave_points_ex[key_id].AddPower(lower_power, delay_power);
+
+				} else {
+					// add active point.
+					float dist = Vector3.Distance(
+						ground_array[wave_x, wave_z].transform.position,
+						ground_array[x, z].transform.position);
+					//Debug.Log(string.Format("({0}, {1}) Dist = {2}", x, z, dist));
+
+					////ground_array[x, z].GetComponent<Renderer>().material.color = Color.blue;
+
+					int lower_power = (int)(wave_power * ((ground_max_x - dist) / ground_max_x)); // TODO:
+					int delay_power = (int)(dist * diffusion_rate);
+
+					//Debug.Log(string.Format("lower_power = {0}, delay_power = {1}", lower_power, delay_power));
+
+					Vector3_Int new_point = new Vector3_Int(
+						x,
+						(int)ground_array[x, z].transform.position.y,
+						z
+					);
+					new_point.SetPower(lower_power, delay_power);
+					wave_points_ex.Add(key_id, new_point);
+				}
+			}
+		}
+	}
+
+	private void Input_Wave_Ex()
+	{
+		if (Input.GetKeyUp("o")) {
+			System.Random rnd = new System.Random(System.DateTime.UtcNow.Millisecond);
+
+			int wave_start_x = rnd.Next(ground_max_x);
+			int wave_start_z = rnd.Next(ground_max_z);
+			int wave_power = 100;
+
+			float hight_now = ground_array[wave_start_x, wave_start_z].transform.position.y;
+			//hight_now += wave_power;
+
+			CreateWaveCenterEx(wave_start_x, (int)hight_now, wave_start_z, wave_power);
+		}
+	}
+
+	private void Update_WavePointsEx()
+	{
+		if (wave_points_ex.Count > 0) {
+
+			foreach (KeyValuePair<int, Vector3_Int> pt in wave_points_ex) {
+				pt.Value.Tick();
+
+				ground_array[pt.Value.x, pt.Value.z].transform.position = pt.Value.GetNewPoint();
+
+				if (!pt.Value.IsActive()) {
+					////ground_array[pt.Value.x, pt.Value.z].GetComponent<Renderer>().material.color = Color.green;
+					wave_points_removeable_ex.Add(pt.Key);
+				}
+			}
+
+			foreach (int item_key in wave_points_removeable_ex) {
+				wave_points_ex.Remove(item_key);
+			}
+			wave_points_removeable_ex.Clear();
+
+			// remove not active items.
+			//wave_points.RemoveAll(item => item.IsActive() == false);
+
+			Debug.Log(string.Format("wave_points_ex count = {0}", wave_points_ex.Count));
+		}
+	}
+
+	private void Update ()
+	{
+		if (Input.GetKeyUp("t")) {
+			System.Random rnd = new System.Random(System.DateTime.UtcNow.Millisecond);
+
+			int wave_x = 33;//rnd.Next(ground_max_x);
+			int wave_z = 33;//rnd.Next(ground_max_z);
+			int wave_power = 100;
+
+			float wave_y = ground_array[wave_x, wave_z].transform.position.y;
+
+			ground_cube cube = ground_array[wave_x, wave_z].AddComponent<ground_cube>();
+
+			// renew cube pos.
+			ground_array[wave_x, wave_z].transform.position =
+				new Vector3(wave_x, wave_y, wave_z);
+			// change cube color.
+			ground_array[wave_x, wave_z].GetComponent<Renderer>().material.color = Color.red;
+			// create new point data.
+			Vector3_Int new_point = new Vector3_Int(
+				wave_x,
+				(int)wave_y,
+				wave_z
+			);
+			// add power on point.
+			new_point.SetPower(wave_power, 0);
+
+			cube.cube_process_data = new_point;
+
+			int diffusion_rate = 2;
+
+			for (int z = 0; z < ground_max_z; ++z) {
+				for (int x = 0; x < ground_max_x; ++x) {
+
+					// add active point.
+					float dist = Vector3.Distance(
+						ground_array[wave_x, wave_z].transform.position,
+						ground_array[x, z].transform.position);
+					//Debug.Log(string.Format("({0}, {1}) Dist = {2}", x, z, dist));
+
+					ground_array[x, z].GetComponent<Renderer>().material.color = Color.gray;
+
+					int lower_power = (int)(wave_power * ((ground_max_x - dist) / ground_max_x)); // TODO:
+					int delay_power = (int)(dist * diffusion_rate);
+
+					//Debug.Log(string.Format("lower_power = {0}, delay_power = {1}", lower_power, delay_power));
+
+					Vector3_Int new_point_ex = new Vector3_Int(
+						x,
+						(int)ground_array[x, z].transform.position.y,
+						z
+					);
+					new_point_ex.SetPower(lower_power, delay_power);
+
+					ground_cube cube_ex = ground_array[x, z].AddComponent<ground_cube>();
+
+					cube_ex.cube_process_data = new_point_ex;
+				}
+			}
+
+		}
+
+		Input_Wave();
+		Input_Wave_Ex();
+
+		Update_WavePoints();
+		Update_WavePointsEx();
+
 	}
 
 }
