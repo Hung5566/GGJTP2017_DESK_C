@@ -5,6 +5,8 @@ using System.Collections.Generic; // for List<T>, Dictionary<T>.
 
 public class Vector3_Int
 {
+
+
 	private const int gravity = 10;
 
 	public bool is_active = false;
@@ -68,6 +70,8 @@ public class Vector3_Int
 
 public class ground : MonoBehaviour
 {
+    public GameObject sandCube;
+    buildingReaction BuildingReaction;
 	private const int ground_max_x = 49;
 	private const int ground_max_z = 49;
 
@@ -81,12 +85,27 @@ public class ground : MonoBehaviour
 
 	private void Start ()
 	{
+        BuildingReaction = GameObject.Find("building").GetComponent<buildingReaction>();
 		for (int z = 0; z < ground_max_z; ++z) {
 			for (int x = 0; x < ground_max_x; ++x) {
 				ground_array[x, z] = GameObject.CreatePrimitive(PrimitiveType.Cube);
 				ground_array[x, z].transform.position = new Vector3(x, 0.0F, z);
 				ground_array[x, z].transform.parent = this.transform;
 				ground_array[x, z].name = string.Format("Cube({0},{1})", x, z);
+
+                ground_array[x, z].AddComponent<Rigidbody>();
+                ground_array[x, z].GetComponent<Rigidbody>().useGravity = false;
+                ground_array[x, z].GetComponent<Rigidbody>().isKinematic = true;
+
+                GameObject sobj = Instantiate(sandCube, ground_array[x, z].transform.position - new Vector3(0, 0.5f, 0), sandCube.transform.rotation);
+                sobj.transform.parent = ground_array[x, z].transform;
+                Destroy(ground_array[x, z].GetComponent<MeshFilter>());
+                Destroy(ground_array[x, z].GetComponent<MeshRenderer>());
+
+                if (x >= 22 && x <= 26 && z >= 22 && z <= 26)
+                {
+                    BuildingReaction.locationStr.Add(ground_array[x, z]);
+                }
 			}
 		}
 //		GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube)
