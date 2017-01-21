@@ -16,7 +16,7 @@ public class CubeMap : MonoBehaviour
     private int m_SizeX = 10;
     [SerializeField]
     private int m_SizeY = 10;
-    CubePoint[,] map;
+    public CubePoint[,] map;
     GameObject m_cube;
     [SerializeField]
     GameObject Earth;
@@ -27,7 +27,6 @@ public class CubeMap : MonoBehaviour
     void Awake()
     {
         Instance = this;
-
     }
 
     void Start()
@@ -59,6 +58,8 @@ public class CubeMap : MonoBehaviour
                 map[i, j] = _Obj.GetComponent<CubePoint>();
                 map[i, j].Init(i, j);
 
+                //eaihung
+                _Obj.AddComponent<cubeAuto>();
                 if (i >= m_SizeX/2 - 2 && i <= m_SizeX/2 + 2 && j >= m_SizeX/2 - 2 && j <= m_SizeX/2 + 2)
                 {
                     BuildingReaction.locationStr.Add(_Obj);
@@ -89,7 +90,7 @@ public class CubeMap : MonoBehaviour
     {
         GameObject _EQ= Instantiate(Earth, _Pos, Quaternion.identity) as GameObject;
         //m_EarthQuake.Add(new EarthQuart(x, y, 5));
-        _EQ.GetComponent<EarthQuart>().Init(120);
+        _EQ.GetComponent<EarthQuart>().Init(200);
     }
     // Update is called once per frame
     void Update()

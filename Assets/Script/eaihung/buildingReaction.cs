@@ -6,7 +6,7 @@ public class buildingReaction : MonoBehaviour {
     public float hp ;
     public List<GameObject> locationStr;
     public float power = 1;
-
+    
     public Vector3 originalPos;
 	// Use this for initialization
 	void Start () {
