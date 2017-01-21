@@ -21,11 +21,14 @@ public class buildingReaction : MonoBehaviour {
         float w_strength=0;
         for (int i = 0; i < 12; i++)
         {
-            str[i] = Mathf.Abs(locationStr[i].transform.position.y - locationStr[24 - i].transform.position.y)*0.1f;
+            str[i] = Mathf.Abs(locationStr[i].transform.GetChild(0).position.y - locationStr[24 - i].transform.GetChild(0).position.y) * 0.1f;
             w_strength += str[i];
         }
-
         transform.position = originalPos +new Vector3(Random.Range(-w_strength, w_strength), Random.Range(-w_strength, w_strength), Random.Range(-w_strength, w_strength));
+
+        hp -= w_strength * 5;
+
+
             //print("yo");
             //GetComponent<Rigidbody>().AddForce(Random.Range(-5, 5f), Random.Range(-5f, 5f), Random.Range(-5f, 5f)*100);
 

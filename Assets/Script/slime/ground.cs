@@ -5,8 +5,6 @@ using System.Collections.Generic; // for List<T>, Dictionary<T>.
 
 public class Vector3_Int
 {
-
-
 	private const int gravity = 10;
 
 	public bool is_active = false;

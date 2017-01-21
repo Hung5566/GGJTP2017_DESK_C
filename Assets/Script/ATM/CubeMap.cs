@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class CubeMap : MonoBehaviour
 {
+    buildingReaction BuildingReaction;
+
 
     public delegate void VoidDelegate();
     public delegate void NextDelegate(int t);
@@ -44,15 +46,23 @@ public class CubeMap : MonoBehaviour
     }
     public void InitMap()
     {
+        BuildingReaction = GameObject.Find("building").GetComponent<buildingReaction>();
+        BuildingReaction.locationStr = new List<GameObject>();
+
         map = new CubePoint[m_SizeX, m_SizeY];
         for (int i = 0; i < m_SizeX; i++)
         {
             for (int j = 0; j < m_SizeY; j++)
             {
-                GameObject _Obj = (Instantiate(m_cube, new Vector3(i, 0, j), Quaternion.identity) as GameObject);
+                GameObject _Obj = (Instantiate(m_cube, new Vector3(i, 0, j), m_cube.transform.rotation) as GameObject);
                 _Obj.transform.parent = transform;
                 map[i, j] = _Obj.GetComponent<CubePoint>();
                 map[i, j].Init(i, j);
+
+                if (i >= m_SizeX/2 - 2 && i <= m_SizeX/2 + 2 && j >= m_SizeX/2 - 2 && j <= m_SizeX/2 + 2)
+                {
+                    BuildingReaction.locationStr.Add(_Obj);
+                }
             }
         }
     }
@@ -79,7 +89,7 @@ public class CubeMap : MonoBehaviour
     {
         GameObject _EQ= Instantiate(Earth, _Pos, Quaternion.identity) as GameObject;
         //m_EarthQuake.Add(new EarthQuart(x, y, 5));
-        _EQ.GetComponent<EarthQuart>().Init(100);
+        _EQ.GetComponent<EarthQuart>().Init(120);
     }
     // Update is called once per frame
     void Update()
@@ -87,7 +97,7 @@ public class CubeMap : MonoBehaviour
 
         m_Clock += Time.deltaTime;
 
-        if (m_Clock >= 0.1)
+        if (m_Clock >= 0.01)
         {
             m_Clock = 0;
             /*   for (int i = m_EarthQuake.Count- 1; i >= 0; i--)
