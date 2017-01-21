@@ -36,6 +36,7 @@ public class PlayerCtrl : MonoBehaviour
         {
             _Diff=Physics.Raycast(ray, out hit) ? hit.point.y: 0;
         }
+        Debug.Log(_Diff);
         return _Diff;
     }
 
