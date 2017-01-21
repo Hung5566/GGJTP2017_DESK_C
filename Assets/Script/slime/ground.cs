@@ -97,7 +97,7 @@ public class ground : MonoBehaviour
                 ground_array[x, z].GetComponent<Rigidbody>().useGravity = false;
                 ground_array[x, z].GetComponent<Rigidbody>().isKinematic = true;
 
-                GameObject sobj = Instantiate(sandCube, ground_array[x, z].transform.position - new Vector3(0, 0.5f, 0), sandCube.transform.rotation);
+                GameObject sobj = Instantiate(sandCube, ground_array[x, z].transform.position - new Vector3(0, 0.5f, 0), sandCube.transform.rotation) as GameObject;
                 sobj.transform.parent = ground_array[x, z].transform;
                 Destroy(ground_array[x, z].GetComponent<MeshFilter>());
                 Destroy(ground_array[x, z].GetComponent<MeshRenderer>());
