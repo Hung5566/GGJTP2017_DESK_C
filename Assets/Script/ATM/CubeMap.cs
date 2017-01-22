@@ -57,7 +57,7 @@ public class CubeMap : MonoBehaviour
                 _Obj.transform.parent = transform;
                 map[i, j] = _Obj.GetComponent<CubePoint>();
                 map[i, j].Init(i, j);
-
+                _Obj.name = "Cube_"+i+"_"+j;
                 //eaihung
                 _Obj.AddComponent<cubeAuto>();
                 if (i >= m_SizeX/2 - 2 && i <= m_SizeX/2 + 2 && j >= m_SizeX/2 - 2 && j <= m_SizeX/2 + 2)
