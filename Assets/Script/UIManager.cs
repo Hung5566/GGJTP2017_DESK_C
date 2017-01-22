@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour {
-    
     private Canvas m_Canvas;
     public Button btn_Start;
 	void Start ()
