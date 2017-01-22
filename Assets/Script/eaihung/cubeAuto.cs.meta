@@ -1,10 +1,17 @@
 fileFormatVersion: 2
 guid: 46e11501eef851c4b83de3911cd41407
-timeCreated: 1484965134
+timeCreated: 1485064102
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - ea: {fileID: 8300000, guid: a8a3686aa54776a438fb41197d9fc09d, type: 3}
+  - ta: {fileID: 8300000, guid: b5367d2ee6afea647935828e20d72a19, type: 3}
+  - testText: {instanceID: 0}
+  - wg: {instanceID: 0}
+  - hintIcon: {instanceID: 0}
+  - indicator: {instanceID: 0}
+  - myCounterNum: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

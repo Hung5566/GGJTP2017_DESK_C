@@ -4,6 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class cubeAuto : MonoBehaviour {
+    public AudioClip ea;
+    public AudioClip ta;
+
+
     public Text testText;
 
     public waveGenerator wg;
@@ -18,6 +22,8 @@ public class cubeAuto : MonoBehaviour {
     public int shownNum;
     private Color myColor;
 
+
+
     public void setCount(int Duration) {
         //hintIcon.transform.position = transform.position + new Vector3(0,2,0);
         indicator = Instantiate(GameObject.Find("indicator"), transform.position + new Vector3(0, 1f, 0), GameObject.Find("indicator").transform.rotation) as GameObject;
@@ -26,6 +32,10 @@ public class cubeAuto : MonoBehaviour {
         duration = Duration;
         timer = duration + 1;
 
+        GetComponent<AudioSource>().clip = ta;
+        GetComponent<AudioSource>().volume = 0.25f;
+        GetComponent<AudioSource>().Play();
+
         startCount = true;
     }
     public void cubeCounting()
@@ -33,6 +43,8 @@ public class cubeAuto : MonoBehaviour {
         if (startCount)
         {
             timer -= Time.deltaTime;
+
+            
 
             showNumImg((int)timer);
             if ((int)timer <= 0) {
@@ -46,6 +58,9 @@ public class cubeAuto : MonoBehaviour {
     void waveGen() {
 
         wg.GetComponent<CubeMap>().CreatEarthQuake(transform.position,-1);
+        GetComponent<AudioSource>().volume = 1;
+        GetComponent<AudioSource>().clip = ea;
+        GetComponent<AudioSource>().Play();
     }
     public void showNumImg(int num) {
         myCounterNum.GetComponent<SpriteRenderer>().sprite = wg.counterNum[num].GetComponent<SpriteRenderer>().sprite;
@@ -54,6 +69,14 @@ public class cubeAuto : MonoBehaviour {
     }
 	// Use this for initialization
 	void Start () {
+        ea = Resources.Load<AudioClip>("EarthQuake");
+        ta = Resources.Load<AudioClip>("warnSound");
+        //print("eee");
+        gameObject.AddComponent<AudioSource>();
+        gameObject.GetComponent<AudioSource>().playOnAwake = false;
+        GetComponent<AudioSource>().clip = ea;
+        //GetComponent<AudioSource>().Play();//print("yo");
+
         wg = GameObject.Find("GameSystem").GetComponent<waveGenerator>();
         //indicator = new GameObject();
         //indicator = Instantiate(GameObject.Find("indicator"), transform.position + new Vector3(0, 2, 0), GameObject.Find("indicator").transform.rotation) as GameObject;
