@@ -19,7 +19,7 @@ public class UIManager : MonoBehaviour {
         page.Add(m_Canvas.transform.FindChild("Team").gameObject);
         page[1].SetActive(false);      
         //button add Listener
-        btn_Start.onClick.AddListener(delegate() { StartGame("Game Screne"); });
+        btn_Start.onClick.AddListener(delegate() { StartGame("EarthQuakeProject"); });
         btn_Team.onClick.AddListener(delegate () { changePage(1); });
         btn_Menu.onClick.AddListener(delegate () { changePage(0); });
 
