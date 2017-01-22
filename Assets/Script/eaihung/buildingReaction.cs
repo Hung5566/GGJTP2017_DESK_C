@@ -5,6 +5,7 @@ using UnityEngine;
 public class buildingReaction : MonoBehaviour {
     bool dead;
 
+    float gap;
 
     public float hp ;
     public List<GameObject> locationStr;
@@ -17,6 +18,8 @@ public class buildingReaction : MonoBehaviour {
     float w_str;
 	// Use this for initialization
 	void Start () {
+        gap = 0.2f;
+
         dead = false;
         w_str = 0;
         dmgCount = 0;
@@ -31,8 +34,6 @@ public class buildingReaction : MonoBehaviour {
             if (other.CompareTag("EarthQuake"))
                 causeDmg(other.GetComponent<EarthQuart>().GetPow());
 
-
-
     }
     void causeDmg(float _Dmg)
     {
@@ -43,7 +44,7 @@ public class buildingReaction : MonoBehaviour {
         }
         else if (dmgCount == 1)
         {
-            if (Time.time - m_EarthQuakeT < 0.15f )
+            if (Time.time - m_EarthQuakeT < gap)
             {
                 //Debug.LogError("場場");
                 dmgCount = 0;
@@ -52,9 +53,6 @@ public class buildingReaction : MonoBehaviour {
         }
 
         m_EarthQuakeT = Time.time;
-
-
-
 
        /* float[] str = new float[12];
 
@@ -81,8 +79,7 @@ public class buildingReaction : MonoBehaviour {
         if (dead)
             return;
 
-
-        if (Time.time - m_EarthQuakeT > 0.15f )
+        if (Time.time - m_EarthQuakeT > gap)
         {
             if (dmgCount == 1)
             {
@@ -94,8 +91,6 @@ public class buildingReaction : MonoBehaviour {
                 }
                 w_str = tmpDmg * 0.01f;
                 dmgCount = 0;
-
-
             }
         }
         shaking();
