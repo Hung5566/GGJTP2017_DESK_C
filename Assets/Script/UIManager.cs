@@ -32,5 +32,4 @@ public class UIManager : MonoBehaviour {
         }
         btn.enabled = false;
     }
-    
 }
