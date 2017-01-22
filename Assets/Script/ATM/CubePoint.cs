@@ -7,7 +7,7 @@ public class CubePoint: MonoBehaviour
     float NowPow = 0;
     int m_x;
     int m_y;
-
+    int m_who;
     [SerializeField]
     Transform WatchCube; 
 
@@ -16,18 +16,30 @@ public class CubePoint: MonoBehaviour
         m_x = _x;
         m_y = _y;
         NowPow = 0;
+        m_who = 0;
     }
 
-    public void SendPow(float _Pow)
+    public void SendPow(float _Pow,int _who)
     {
+        /*if (m_who == 0)
+        {
+            NowPow += _Pow;
+        }
+        else
+        { 
+            NowPow = 0;
+        
+        }
+        m_who = _who;*/
         NowPow += _Pow;
+
     }
 
 
     void OnMouseDown()
     {
 
-        CubeMap.Instance.CreatEarthQuake(transform.position);
+        CubeMap.Instance.CreatEarthQuake(transform.position,1);
 
     }
 
@@ -43,6 +55,7 @@ public class CubePoint: MonoBehaviour
            WatchCube.position=new Vector3(transform.position.x, 0, transform.position.z);
 
         }
+        m_who = 0;
 
     }
     private void Start()

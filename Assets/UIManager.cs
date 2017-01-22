@@ -17,7 +17,7 @@ public class UIManager : MonoBehaviour {
 	
     public void StartGame(string SceneName)
     {
-        //SceneManager.LoadScene(SceneName);
+        SceneManager.LoadScene("EarthQuakeProject");
     }
 
 
