@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class buildingReaction : MonoBehaviour {
+    public AudioClip ds;
+    public AudioClip fs;
 
 
     bool dead;
@@ -20,6 +22,11 @@ public class buildingReaction : MonoBehaviour {
     float w_str;
 	// Use this for initialization
 	void Start () {
+        ds = Resources.Load<AudioClip>("sword-clash4");
+        fs = Resources.Load<AudioClip>("bomb2");
+
+
+
         gap = 0.2f;
 
         dead = false;
@@ -51,6 +58,9 @@ public class buildingReaction : MonoBehaviour {
                 //Debug.LogError("場場");
                 dmgCount = 0;
                 GetComponent<Animator>().SetTrigger("defense");
+                GetComponent<AudioSource>().clip = ds;
+                GetComponent<AudioSource>().volume = 0.1f;
+                GetComponent<AudioSource>().Play();
             }
         }
 
@@ -86,6 +96,11 @@ public class buildingReaction : MonoBehaviour {
             if (dmgCount == 1)
             {
                 hp -= tmpDmg*0.5f;
+
+                GetComponent<AudioSource>().clip = fs;
+                GetComponent<AudioSource>().volume = 1;
+                GetComponent<AudioSource>().Play();
+
                 if(hp<=0)
                 {
                     explosion();
