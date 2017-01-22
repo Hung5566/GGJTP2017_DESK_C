@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class buildingReaction : MonoBehaviour {
+
+
     bool dead;
 
     float gap;
@@ -88,6 +90,9 @@ public class buildingReaction : MonoBehaviour {
                 {
                     explosion();
                     dead = true;
+                    GameObject.Find("GameSystem").GetComponent<waveGenerator>().setEnd(false);
+                    //GameObject.Find("GameSystem").GetComponent<waveGenerator>().win = false;
+
                 }
                 w_str = tmpDmg * 0.01f;
                 dmgCount = 0;
