@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 
 public class waveGenerator : MonoBehaviour {
     public List<GameObject> counterNum;
@@ -31,20 +31,23 @@ public class waveGenerator : MonoBehaviour {
         return cm.map[x, y].gameObject;
     }
 
-    public void setEnd(bool state) {
+    public IEnumerator setEnd(bool state) {
         end = true;
         win = state;
-        if (win)
-            endAnim.GetComponent<Image>().sprite = Resources.Load<Sprite>(@"Image\UI\Success.jpg");
-        else
-            endAnim.GetComponent<Image>().sprite = Resources.Load<Sprite>(@"Image\UI\Lose.jpg");
+        yield return new WaitForSeconds(1.0f);
+        GetComponent<GameUI>().IsGameOver(win);
 
-        endAnim.SetBool("IsEnding", end);
+        //if (win)
+        //    endAnim.GetComponent<Image>().sprite = Resources.Load<Sprite>(@"Image\UI\Success.jpg");
+        //else
+        //    endAnim.GetComponent<Image>().sprite = Resources.Load<Sprite>(@"Image\UI\Lose.jpg");
+
+        //endAnim.SetBool("IsEnding", end);
     }
 
 	// Use this for initialization
 	void Start () {
-        level1_waves = new List<float>(new float[] { 3,8,13,18,23,26 });
+        level1_waves = new List<float>(new float[] { 3,8,13,18 });
         level2_waves = new List<float>(new float[] {1,3,5,7,9,11,13,15,17,19 });
 
         end = false;
@@ -64,7 +67,10 @@ public class waveGenerator : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         if (end)
+        {
+
             return;
+        }
 
         if (level == 1)
         {
@@ -75,64 +81,17 @@ public class waveGenerator : MonoBehaviour {
         }
 	}
     void level_1() {
-
         timer += Time.deltaTime;
         //level1_waves = new List<float>(new float[] { 3, 8, 13, 18, 23, 26 });
-        
-
-        if (timer >= level1_waves[step]) {
-
+        if ( step < level1_waves.Count && timer >= level1_waves[step])
+        {
             cubeCounter(randomCubeSelector());
             step++;
 
-            if (step == 6)
-            {
-                setEnd(true);
-                //if (end)
-                //{
-                //    if (win)
-                //        endAnim.GetComponent<Image>().sprite = Resources.Load<Sprite>(@"Image\UI\Success.jpg");
-                //    else
-                //        endAnim.GetComponent<Image>().sprite = Resources.Load<Sprite>(@"Image\UI\Lose.jpg");
-
-                //    endAnim.SetBool("IsEnding", end);
-                //}
-            }
         }
-        
-
-
-        //if (timer >= 3 && step == 0)
-        //{
-        //    cubeCounter(randomCubeSelector());
-        //    step++;
-        //}
-        //if (timer >= 8 && step == 1)
-        //{
-        //    cubeCounter(randomCubeSelector());
-        //    step++;
-        //}
-        //if (timer >= 13 && step == 2)
-        //{
-        //    cubeCounter(randomCubeSelector());
-        //    step++;
-        //}
-        //if (timer >= 18 && step == 3)
-        //{
-        //    cubeCounter(randomCubeSelector()); 
-        //    step++;
-        //}
-
-        //if (timer >= 23 && step == 4)
-        //{
-        //    cubeCounter(randomCubeSelector());
-        //    step++;
-        //}
-
-        //if (timer >= 26 && step == 5) {
-        //    end = true;
-        //}
-
+        else if (timer >= level1_waves[level1_waves.Count - 1] + 6) {
+            StartCoroutine(setEnd(true));
+        }
 
     }
 
@@ -140,76 +99,21 @@ public class waveGenerator : MonoBehaviour {
     {
         timer += Time.deltaTime;
 
-        if (timer >= level2_waves[step])
+
+        if (step < level2_waves.Count&&timer >= level2_waves[step])
         {
             cubeCounter(randomCubeSelector());
             step++;
-            if (step == 9)
-            {
-                setEnd(true);
-                if (end)
-                {
-                    if (win)
-                        endAnim.GetComponent<Image>().sprite = Resources.Load<Sprite>(@"Image\UI\Success.jpg");
-                    else
-                        endAnim.GetComponent<Image>().sprite = Resources.Load<Sprite>(@"Image\UI\Lose.jpg");
-                }
-            }
+            //if (step == level1_waves.Count)
+            //{
+            //    StartCoroutine(setEnd(true));
+            //}
         }
-        /*
-        if (timer >= 1 && step == 0)
+        else if (timer >= level2_waves[level2_waves.Count - 1] + 6)
         {
-            cubeCounter(randomCubeSelector());
-            step++;
-        }
-        if (timer >= 3 && step == 1)
-        {
-            cubeCounter(randomCubeSelector());
-            step++;
-        }
-        if (timer >= 5 && step == 2)
-        {
-            cubeCounter(randomCubeSelector());
-            step++;
-        }
-        if (timer >= 7 && step == 3)
-        {
-            cubeCounter(randomCubeSelector());
-            step++;
+            StartCoroutine(setEnd(true));
         }
 
-        if (timer >= 9 && step == 4)
-        {
-            cubeCounter(randomCubeSelector());
-            step++;
-        }
-
-        if (timer >= 11 && step == 5)
-        {
-            cubeCounter(randomCubeSelector());
-            step++;
-        }
-        if (timer >= 13 && step == 6)
-        {
-            cubeCounter(randomCubeSelector());
-            step++;
-        }
-        if (timer >= 15 && step == 7)
-        {
-            cubeCounter(randomCubeSelector());
-            step++;
-        }
-        if (timer >= 17 && step == 8)
-        {
-            cubeCounter(randomCubeSelector());
-            step++;
-        }
-        if (timer >= 19 && step == 9)
-        {
-            cubeCounter(randomCubeSelector());
-            step++;
-        }
-         * */
     }
     GameObject randomCubeSelector() {
         int x = Random.Range(0, max);

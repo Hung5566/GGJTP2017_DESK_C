@@ -61,7 +61,7 @@ public class cubeAuto : MonoBehaviour {
         myCounterNum = new GameObject();
         myCounterNum.transform.parent = transform;
         myCounterNum.AddComponent<SpriteRenderer>();
-        myCounterNum.transform.position = transform.position + new Vector3(0,7,0);
+        myCounterNum.transform.position = transform.position + new Vector3(0,8,0);
         //myCounterNum.GetComponent<SpriteRenderer>().sprite = wg.counterNum[1].GetComponent<SpriteRenderer>().sprite;
         myCounterNum.transform.LookAt(myCounterNum.transform.position - (Camera.main.transform.position - myCounterNum.transform.position));
         timer = 0;

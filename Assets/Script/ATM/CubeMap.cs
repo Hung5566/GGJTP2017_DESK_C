@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class CubeMap : MonoBehaviour
 {
     buildingReaction BuildingReaction;
-
+    public GameObject grassCube;
 
     public delegate void VoidDelegate();
     public delegate void NextDelegate(int t);
@@ -18,6 +18,8 @@ public class CubeMap : MonoBehaviour
     private int m_SizeY = 10;
     public CubePoint[,] map;
     GameObject m_cube;
+    GameObject m_cube2;
+
     [SerializeField]
     GameObject Earth;
     private float m_Clock;
@@ -33,6 +35,7 @@ public class CubeMap : MonoBehaviour
     {
         m_Time = 0;
         m_cube = Resources.Load("Cube") as GameObject;
+        m_cube2 = Resources.Load("Cube (1)") as GameObject;
         InitMap();
     }
 
@@ -53,7 +56,11 @@ public class CubeMap : MonoBehaviour
         {
             for (int j = 0; j < m_SizeY; j++)
             {
-                GameObject _Obj = (Instantiate(m_cube, new Vector3(i, 0, j), m_cube.transform.rotation) as GameObject);
+                GameObject tmp = m_cube;
+                if (Random.Range(0, 2) == 0)
+                    tmp = m_cube2;
+                GameObject _Obj = (Instantiate(tmp, new Vector3(i, 0, j), tmp.transform.rotation) as GameObject);
+
                 _Obj.transform.parent = transform;
                 map[i, j] = _Obj.GetComponent<CubePoint>();
                 map[i, j].Init(i, j);
@@ -66,6 +73,38 @@ public class CubeMap : MonoBehaviour
                 }
             }
         }
+        //for (int i = m_SizeX * 2; i > -m_SizeX; i--)
+        //{
+        //    for (int j = -1; j > -m_SizeY/4; j--)
+        //    {
+        //        GameObject _Obj = (Instantiate(grassCube, new Vector3(i, -0.5f, j), grassCube.transform.rotation) as GameObject);
+        //    }
+        //}
+
+        //for (int i = m_SizeX * 2; i > -m_SizeX; i--)
+        //{
+        //    for (int j = m_SizeY; j < 1.25f * m_SizeY; j++)
+        //    {
+        //        GameObject _Obj = (Instantiate(grassCube, new Vector3(i, -0.5f, j), grassCube.transform.rotation) as GameObject);
+        //    }
+        //}
+        //for (int i = -1; i > -m_SizeX; i--)
+        //{
+        //    for (int j = 0; j < m_SizeY; j++)
+        //    {
+        //        GameObject _Obj = (Instantiate(grassCube, new Vector3(i, -0.5f, j), grassCube.transform.rotation) as GameObject);
+        //    }
+        //}
+
+        //for (int i = m_SizeX; i < 2*m_SizeX; i++)
+        //{
+        //    for (int j = 0; j < m_SizeY; j++)
+        //    {
+        //        GameObject _Obj = (Instantiate(grassCube, new Vector3(i, -0.5f, j), grassCube.transform.rotation) as GameObject);
+        //    }
+        //}
+
+
     }
 
     /// <summary>

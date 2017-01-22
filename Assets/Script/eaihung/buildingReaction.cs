@@ -90,7 +90,7 @@ public class buildingReaction : MonoBehaviour {
                 {
                     explosion();
                     dead = true;
-                    GameObject.Find("GameSystem").GetComponent<waveGenerator>().setEnd(false);
+                    StartCoroutine(GameObject.Find("GameSystem").GetComponent<waveGenerator>().setEnd(false));
                     //GameObject.Find("GameSystem").GetComponent<waveGenerator>().win = false;
 
                 }

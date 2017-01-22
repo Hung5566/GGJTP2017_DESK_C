@@ -9,33 +9,35 @@ public class GameUI : MonoBehaviour {
     private Image newspaper;
     private Animator anim_newspaper;
     public enum Result { Success , Lose };
-    
+
+    public AudioClip winSound;
+    public AudioClip loseSound;
+
     void Start ()
     {
-        newspaper = GameObject.Find("newspaper").GetComponent<Image>();
+        newspaper = GameObject.Find("Ending").GetComponent<Image>();
         newspaper.color = new Color(1, 1, 1, 0);
         newspaper.enabled = false;
         anim_newspaper = newspaper.GetComponent<Animator>();
     }
-    public void IsGameOver(Result result)
+    public void IsGameOver(bool win)
     {
-        
-        switch (result)
+        if (win)
         {
-            case Result.Success:
-                newspaper.sprite = _newspapers[1];
-                break;
-            case Result.Lose:
-                newspaper.sprite = _newspapers[0];
-                break;
-            default:
-                break;
+            newspaper.sprite = _newspapers[1];
+            GetComponent<AudioSource>().clip = winSound;
+            GetComponent<AudioSource>().Play();
         }
+        else
+        {
+            newspaper.sprite = _newspapers[0];
+            GetComponent<AudioSource>().clip = loseSound;
+            GetComponent<AudioSource>().Play();
+        }
+
         newspaper.enabled = true;
         anim_newspaper.SetBool("IsEnding", true);
         StartCoroutine(DisplayImage(newspaper));
-
-
     }
     IEnumerator DisplayImage(Image ig)
     {
